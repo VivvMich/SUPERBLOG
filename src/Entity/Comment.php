@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -23,6 +25,10 @@ class Comment
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Blog $blog = null;
 
     public function __construct(){
         $this->createAt = new \DateTimeImmutable('now');
@@ -68,4 +74,17 @@ class Comment
 
         return $this;
     }
+
+    public function getBlog(): ?Blog
+    {
+        return $this->blog;
+    }
+
+    public function setBlog(?Blog $blog): self
+    {
+        $this->blog = $blog;
+
+        return $this;
+    }
+
 }

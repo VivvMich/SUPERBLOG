@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\BlogRepository;
 
 #[Route('/comment')]
 class CommentController extends AbstractController
@@ -22,22 +24,51 @@ class CommentController extends AbstractController
     }
 
     #[Route('/new', name: 'app_comment_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, CommentRepository $commentRepository): Response
+    public function new(Request $request, CommentRepository $commentRepository, BlogRepository $blogRepository): JsonResponse
     {
-        $comment = new Comment();
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
+        if ( $request->isMethod('POST')){ // On vérifie que l'ajax est en mode post
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $commentRepository->save($comment, true);
 
-            return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+            $form = $request->getContent(); // On récupère les données de l'ajax.
+            $data = []; // On precise que le conteneur des données est un tableau.
+            $data = json_decode($form, true); // On décode les données de l'ajax que l'on met dans le tableau
+            $user = $this->getUser(); // On recupère lors de la création du commentaire l'utilisateur connecté
+            $blogId = $data['id']; // On recupère l'id du blog afin de l'injecter dans l'objet Comment.
+            $content = $data['content']; // On récupère le contenu HTML du WYSIWYG (What you see is what you get) de TinyMCE
+
+            $blog = $blogRepository->findOneById($blogId); // On recupère le blog à partir de l'id sur le front
+
+            $comment = new Comment();
+            $comment->setUser($user); // On injecte dans le commentaire l'utilisateur connecté
+            $comment->setContent($content); // On injecte le contenu du commentaire.
+            $comment->setBlog($blog); // On relie le commentaire au blog ou il a été créé
+            $commentRepository->save($comment, true); // On fait persister les données dans la BDD
+
+            return new JsonResponse([
+                'status' => "ok", // On retourne un message de reussite
+            ]);
+        }
+        else
+        {
+            return new JsonResponse([
+                'status' => "error", // On retourn un message d'erreur.
+            ]);
         }
 
-        return $this->renderForm('comment/new.html.twig', [
-            'comment' => $comment,
-            'form' => $form,
-        ]);
+//        $comment = new Comment();
+//        $form = $this->createForm(CommentType::class, $comment);
+//        $form->handleRequest($request);
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $commentRepository->save($comment, true);
+//
+//            return $this->redirectToRoute('app_comment_index', [], Response::HTTP_SEE_OTHER);
+//        }
+//
+//        return $this->renderForm('comment/new.html.twig', [
+//            'comment' => $comment,
+//            'form' => $form,
+//        ]);
     }
 
     #[Route('/{id}', name: 'app_comment_show', methods: ['GET'])]

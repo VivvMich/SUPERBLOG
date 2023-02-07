@@ -13,6 +13,17 @@
                 {% if blog.modifyAt != null %}
                 <p class="ml-4">Dernière modification le <span><i>{{ blog.modifyAt|date('d-m-Y H:i') }}</i></span></p>
                 {% endif %}
+
+                <div class="text-center my-4">
+                    <h3> Un petit commentaire ?</h3>
+                    <textarea id="commentTextarea" cols="100" rows="10"></textarea>
+                </div>
+
+                <div class="text-center my-4">
+                    <button id="test" class="btn btn-primary">Text AJAX</button>
+                </div>
+
+
                 <div class="text-center">
                     <a  href="{{ path('app_blog_index') }}">Retour à l'index</a>
                 </div>
@@ -24,3 +35,34 @@
 
 {#    {{ include('blog/_delete_form.html.twig') }}#}
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        // NOTRE AJAX
+        var test = document.getElementById('test');
+
+
+        test.addEventListener('click', function (){
+
+            var textContent = tinymce.get('commentTextarea').getContent();
+
+            fetch("{{ path('app_comment_new') }}", {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({
+                    id: {{ blog.id }},
+                    content : textContent,
+        })
+            })
+                .then(response => response.json())
+                .then(data => console.log(data));
+        })
+
+    </script>
+{% endblock %}
+
+
