@@ -3,7 +3,26 @@
 {% block title %}Blog index{% endblock %}
 
 {% block body %}
-    <h1>Blog index</h1>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+
+                <nav class="navbar navbar-light bg-light justify-content-between">
+                    <a class="navbar-brand">Liste des Articles</a>
+                    <form class="form-inline">
+                        <div class="input-group">
+                            <input class="form-control" type="search" placeholder="Rechercher dans les titres" aria-label="Search">
+                            <button class="btn btn-outline-success" type="submit">Rechercher dans les titres</button>
+                        </div>
+                    </form>
+                </nav>
+
+            </div>
+        </div>
+    </div>
+
+
 
     <table class="table">
         <thead>

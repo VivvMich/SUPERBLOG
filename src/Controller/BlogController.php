@@ -3,10 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Blog;
-use App\Entity\User;
 use App\Form\BlogType;
 use App\Repository\BlogRepository;
-use App\Repository\UserRepository;
+use App\Repository\CommentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,10 +43,13 @@ class BlogController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_blog_show', methods: ['GET'])]
-    public function show(Blog $blog): Response
+    public function show(Blog $blog, CommentRepository $commentRepository): Response
     {
+        $comments = $commentRepository->findByBlog($blog);
+
         return $this->render('blog/show.html.twig', [
             'blog' => $blog,
+            'comments' => $comments
         ]);
     }
 

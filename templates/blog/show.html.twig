@@ -14,6 +14,22 @@
                 <p class="ml-4">Dernière modification le <span><i>{{ blog.modifyAt|date('d-m-Y H:i') }}</i></span></p>
                 {% endif %}
 
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-5">
+                            <h2>Commentaires</h2>
+                                <div id="comment-list">
+                                {% for comment in comments %}
+                                    <div class="my-3">
+                                        <p class="my-0 fw-bold">{{comment.user.email}}<span class="fw-normal"> {{ comment.createAt|date('d-m-Y H:i')  }}</span></p>
+                                        <div>{{ comment.content|raw }}</div>
+                                    </div>
+                                {% endfor %}
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="text-center my-4">
                     <h3> Un petit commentaire ?</h3>
                     <textarea id="commentTextarea" cols="100" rows="10"></textarea>
@@ -31,6 +47,8 @@
         </div>
     </div>
 
+
+
 {#    <a href="{{ path('app_blog_edit', {'id': blog.id}) }}">edit</a>#}
 
 {#    {{ include('blog/_delete_form.html.twig') }}#}
@@ -41,12 +59,13 @@
 
     <script>
         // NOTRE AJAX
-        var test = document.getElementById('test');
+        const test = document.getElementById('test');
+        const commentList = document.getElementById('comment-list');
 
 
         test.addEventListener('click', function (){
 
-            var textContent = tinymce.get('commentTextarea').getContent();
+            let textContent = tinymce.get('commentTextarea').getContent();
 
             fetch("{{ path('app_comment_new') }}", {
                 method: "POST",
@@ -59,8 +78,37 @@
         })
             })
                 .then(response => response.json())
-                .then(data => console.log(data));
+                .then(data => {
+                    console.log(data);
+
+                    // Ajout d'un commentaire en temps réel
+                    createComment(data);
+
+                    // On réinitialise le contenu du textearea apres la réception de la reponse de l'ajax.
+
+                    tinymce.get('commentTextarea').setContent(''); // Avec selecteurs si vous en avez plusieurs
+                    // sur la même page.
+                    //tinymce.activeEditor.setContent(''); // si il y en a seulement 1
+                });
         })
+
+
+        function createComment(data){
+            let user = data.user;
+            let content = data.content
+
+            // conversion en date français
+            let date = data.date.date
+            const dateObj = new Date(date);
+            let day = dateObj.getDate() < 10 ? "0" + dateObj.getDate() : dateObj.getDate();
+            let month = dateObj.getMonth() < 10 ? "0" + parseInt(dateObj.getMonth() + 1) : parseInt(dateObj.getMonth() + 1);
+            let hours = dateObj.getHours() < 10 ? "0" + dateObj.getHours() : dateObj.getHours();
+            let minutes = dateObj.getMinutes() < 10 ? "0" + dateObj.getMinutes() : dateObj.getMinutes();
+            let convertedDate = ' ' + day + '-' + month + '-'+ dateObj.getFullYear() + ' ' + hours + ":" + minutes;
+            let div = document.createElement("div")
+            div.innerHTML = `<div class='my-3 '><p class='my-0 fw-bold'>${user}<span class="fw-normal">${convertedDate}</span></p> <div>${content}</div> </div>`;
+            commentList.append(div);
+        }
 
     </script>
 {% endblock %}

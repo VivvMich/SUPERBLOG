@@ -46,6 +46,10 @@ class CommentController extends AbstractController
 
             return new JsonResponse([
                 'status' => "ok", // On retourne un message de reussite
+                'content' => $content,
+                'user' => $user->getUserIdentifier(),
+                'date' => $comment->getCreateAt(),
+
             ]);
         }
         else
