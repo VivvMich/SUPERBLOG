@@ -14,7 +14,6 @@ Encore
     // only needed for CDN's or subdirectory deploy
     //.setManifestKeyPrefix('build/')
 
-
     /*
      * ENTRY CONFIG
      *
@@ -24,7 +23,6 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('bootstrap_css', './node_modules/bootstrap/dist/css/bootstrap.css' )
     .addEntry('bootstrap_js', './node_modules/bootstrap/dist/js/bootstrap.bundle.js' )
-
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 
