@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\FileUploader;
 
 #[Route('/blog')]
 class BlogController extends AbstractController
@@ -23,13 +24,16 @@ class BlogController extends AbstractController
     }
 
     #[Route('/new', name: 'app_blog_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, BlogRepository $blogRepository): Response
+    public function new(Request $request, BlogRepository $blogRepository, FileUploader $fu): Response
     {
         $blog = new Blog();
         $form = $this->createForm(BlogType::class, $blog);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $uploadFiles = $form->get('image')->getData();
+            $imageFilename = $fu->upload($uploadFiles);
+            $blog->setImage($imageFilename);
             $blog->setUser($this->getUser());
             $blogRepository->save($blog, true);
 
@@ -54,12 +58,18 @@ class BlogController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_blog_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Blog $blog, BlogRepository $blogRepository): Response
+    public function edit(Request $request, Blog $blog, BlogRepository $blogRepository, FileUploader $fu): Response
     {
+        $imageBuffer = $blog->getImage();
+
         $form = $this->createForm(BlogType::class, $blog);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $uploadFiles = $form->get('image')->getData();
+            $image = $uploadFiles ?? $imageBuffer;
+            $imageFilename = $fu->upload($image);
+            $blog->setImage($imageFilename);
             $blog->setModifyAt(new \DateTime('now'));
             $blogRepository->save($blog, true);
 

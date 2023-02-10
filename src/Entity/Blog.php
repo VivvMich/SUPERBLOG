@@ -34,6 +34,12 @@ class Blog
     #[ORM\OneToMany(mappedBy: 'blog', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image_alt = null;
+
     public function __construct(){
         $this->createAt = new \DateTimeImmutable('now');
         $this->comments = new ArrayCollection();
@@ -130,6 +136,30 @@ class Blog
                 $comment->setBlog(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getImageAlt(): ?string
+    {
+        return $this->image_alt;
+    }
+
+    public function setImageAlt(?string $image_alt): self
+    {
+        $this->image_alt = $image_alt;
 
         return $this;
     }
