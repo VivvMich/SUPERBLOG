@@ -6,7 +6,7 @@ use App\Entity\Blog;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class BlogType extends AbstractType
 {
@@ -15,6 +15,12 @@ class BlogType extends AbstractType
         $builder
             ->add('title')
             ->add('content')
+            ->add('image', FileType::class, [
+                'required' => false,
+                'label' => "Image de l'article",
+                'data_class' => null,
+            ])
+            ->add('image_alt')
         ;
     }
 

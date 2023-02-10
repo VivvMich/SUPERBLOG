@@ -23,38 +23,45 @@
     </div>
 
 
+    <div class="container">
+        <div class="row">
+            {% for blog in blogs %}
+                <div class="col-4">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="..." alt="Card image cap">
+                        <div class="card-body">
+                            <h5 class="card-title h5"><a class="link-dark text-decoration-none" href="
+                                {{ path('app_blog_show', {'id': blog.id}) }}">{{ blog.title }} </a> </h5>
+{#                            <p class="card-text">{{ blog.content|slice(0, 200) }}</p>#}
+                            <a href="{{ path('app_blog_edit', {'id': blog.id}) }}" class="btn btn-primary">Editer l'article</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Content</th>
-                <th>CreateAt</th>
-                <th>ModifyAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for blog in blogs %}
-            <tr>
-                <td>{{ blog.id }}</td>
-                <td>{{ blog.title }}</td>
-                <td>{{ blog.content }}</td>
-                <td>{{ blog.createAt ? blog.createAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ blog.ModifyAt ? blog.ModifyAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_blog_show', {'id': blog.id}) }}">show</a>
-                    <a href="{{ path('app_blog_edit', {'id': blog.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
-    <a href="{{ path('app_blog_new') }}">Create new</a>
+
+
+
+
+{#            <tr>#}
+{#                <td>{{ blog.id }}</td>#}
+{#                <td>{{ blog.title }}</td>#}
+{#                <td>{{ blog.content }}</td>#}
+{#                <td>{{ blog.createAt ? blog.createAt|date('Y-m-d H:i:s') : '' }}</td>#}
+{#                <td>{{ blog.ModifyAt ? blog.ModifyAt|date('Y-m-d H:i:s') : '' }}</td>#}
+{#                <td>#}
+{#                    <a href="{{ path('app_blog_show', {'id': blog.id}) }}">show</a>#}
+{#                    <a href="{{ path('app_blog_edit', {'id': blog.id}) }}">edit</a>#}
+{#                </td>#}
+{#            </tr>#}
+{#        {% else %}#}
+{#            <tr>#}
+{#                <td colspan="6">no records found</td>#}
+{#            </tr>#}
+
+
+{#    <a href="{{ path('app_blog_new') }}">Create new</a>#}
 {% endblock %}
